@@ -9,9 +9,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "art": "node tools/art/forge.mjs",
-    "test": "node --test tests/unit/",
+    "test": "node --test \"tests/unit/*.test.js\"",
     "test:e2e": "playwright test",
-    "balance": "node tools/sim/balance.mjs"
+    "balance": "node tools/sim/balance.mjs",
+    "styles": "node tools/sim/styles.mjs"
   },
   "dependencies": {
     "@fontsource/nunito": "^5.3.0",
