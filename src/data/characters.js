@@ -15,6 +15,7 @@
 export const CHARACTERS = [
   {
     id: 'governor',
+    short: 'Governor',
     name: 'Governor',
     role: 'Emergency political authority',
     color: 'violet',
@@ -39,6 +40,7 @@ export const CHARACTERS = [
   },
   {
     id: 'scientist',
+    short: 'Scientist',
     name: 'Scientist',
     role: 'Research and analysis specialist',
     color: 'cyan',
@@ -61,6 +63,7 @@ export const CHARACTERS = [
   },
   {
     id: 'engineer',
+    short: 'Engineer',
     name: 'Engineer',
     role: 'Infrastructure specialist',
     color: 'orange',
@@ -83,6 +86,7 @@ export const CHARACTERS = [
   },
   {
     id: 'medical',
+    short: 'Medical Director',
     name: 'Medical Director',
     role: 'Healthcare specialist',
     color: 'coral',
@@ -106,6 +110,7 @@ export const CHARACTERS = [
   },
   {
     id: 'energy',
+    short: 'Energy Director',
     name: 'Energy Director',
     role: 'Power-grid specialist',
     color: 'yellow',
@@ -129,6 +134,7 @@ export const CHARACTERS = [
   },
   {
     id: 'logistics',
+    short: 'Logistics Cmdr.',
     name: 'Logistics Commander',
     role: 'Transportation and supply specialist',
     color: 'green',
@@ -152,6 +158,7 @@ export const CHARACTERS = [
   },
   {
     id: 'ai',
+    short: 'AI Architect',
     name: 'AI Systems Architect',
     role: 'Prediction and optimization specialist',
     color: 'magenta',

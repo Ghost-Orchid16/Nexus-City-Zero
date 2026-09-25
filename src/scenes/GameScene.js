@@ -13,6 +13,13 @@ import { session, reducedMotion } from '../core/session.js';
 import { transitionTo, fadeIn } from '../ui/components.js';
 import { exposeDebug } from '../core/debug.js';
 
+/** Visual QA / tests: `?test&start=game&role=ai&theme=power&seed=qa` starts that exact run. */
+function qaConfig() {
+  const p = new URLSearchParams(globalThis.location?.search || '');
+  if (!(p.has('test') || p.has('debug')) || !p.get('role')) return null;
+  return createRunConfig({ character: p.get('role'), scenario: p.get('theme') || 'power', seed: p.get('seed') || 'qa', randomize: p.has('surprise') });
+}
+
 /** Map feedback per system when a response lands. */
 const BURST = { health: 'health', energy: 'energy', water: 'water', supplies: 'supplies', infrastructure: 'repair', transport: 'good', safety: 'good', communication: 'good' };
 
@@ -27,7 +34,7 @@ export default class GameScene extends Phaser.Scene {
 
   init(data = {}) {
     this.demo = !!data.demo;
-    this.config = this.demo ? randomRunConfig(freshSeed()) : data.config || session.config || randomRunConfig(freshSeed());
+    this.config = this.demo ? randomRunConfig(freshSeed()) : data.config || session.config || qaConfig() || randomRunConfig(freshSeed());
     this.finished = false;
     this.viewTimer = 0;
   }

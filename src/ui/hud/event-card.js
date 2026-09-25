@@ -135,7 +135,7 @@ class ChoiceButton extends Phaser.GameObjects.Container {
 
     // tags: role-only, risk, underfunded, locked
     const tags = [];
-    if (choice.role) tags.push(tag(scene, 0, 0, `${CHARACTER_BY_ID[choice.role].name.toUpperCase()} ONLY`, { color: CHARACTER_BY_ID[choice.role].color, size: 13, height: 26, pad: 8, iconFrame: null }));
+    if (choice.role) tags.push(tag(scene, 0, 0, `${CHARACTER_BY_ID[choice.role].short.toUpperCase()} ONLY`, { color: CHARACTER_BY_ID[choice.role].color, size: 13, height: 26, pad: 8, iconFrame: null }));
     if (choice.locked) tags.push(tag(scene, 0, 0, `NEED ${choice.cost} BUDGET`, { color: 'red', size: 13, height: 26, pad: 8 }));
     else if (choice.underfunded) tags.push(tag(scene, 0, 0, 'UNDERFUNDED · 50%', { color: 'red', size: 13, height: 26, pad: 8 }));
     if (choice.risk > 0) {
@@ -145,10 +145,8 @@ class ChoiceButton extends Phaser.GameObjects.Container {
     } else if (choice.tags.includes('bold')) {
       tags.push(tag(scene, 0, 0, 'BOLD', { color: 'orange', size: 13, height: 26, pad: 8 }));
     }
-    // tags are stickers on the button's top edge; the label wraps before it runs under them
-    const tagsW = tags.reduce((sum, t) => sum + t.width + 6, 0);
+    // tags are stickers on the button's top edge, above the label, so the label keeps its full width
     this.label = scene.add.text(70, 14, choice.label, textStyle({ size: 22, weight: '900', color: choice.locked ? UI.inkSoft : UI.ink, wrap: w - 90 }));
-    if (tagsW && 70 + this.label.width > w - 12 - tagsW) this.label.setWordWrapWidth(Math.max(180, w - 90 - tagsW), true);
     let tx = w - 10;
     for (const t of tags) {
       t.x = tx - t.width;
