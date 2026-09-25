@@ -187,9 +187,9 @@ class ChoiceButton extends Phaser.GameObjects.Container {
     }
   }
 
+  /** Keyboard focus ring only; the card decides what to preview. */
   setFocus(on) {
     this.ring.setVisible(on);
-    if (on) this.onHoverCb?.(this);
   }
 
   activate() {
@@ -241,6 +241,7 @@ export class EventCard {
     const badges = [];
     if (ev.surge) badges.push(tag(s, 0, 29, 'SURGE', { color: 'red', size: 14, height: 28, pad: 8 }));
     if (ev.softened) badges.push(tag(s, 0, 29, 'SOFTENED', { color: 'cyan', size: 14, height: 28, pad: 8 }));
+    if (this.sim.buffs.boost > 1) badges.push(tag(s, 0, 29, `BOOSTED +${Math.round((this.sim.buffs.boost - 1) * 100)}%`, { color: 'green', size: 14, height: 28, pad: 8 }));
     let bx = w - 12;
     for (const b of badges) {
       b.x = bx - b.width;

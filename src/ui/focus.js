@@ -3,6 +3,26 @@
 // keyboard share one focus so switching devices never strands the player.
 import Phaser from 'phaser';
 
+/**
+ * Phaser can re-dispatch queued keyboard events when frames are very slow. Each key handler owns
+ * one of these guards: an event is handled at most once per handler, and a handler created while
+ * an event was being processed (e.g. a menu that just opened) ignores that older event.
+ */
+export class KeyGuard {
+  constructor() {
+    this.seen = new WeakSet();
+    this.since = globalThis.performance?.now() ?? 0;
+  }
+
+  /** true → skip this event */
+  skip(e) {
+    if (e.timeStamp && e.timeStamp < this.since) return true;
+    if (this.seen.has(e)) return true;
+    this.seen.add(e);
+    return false;
+  }
+}
+
 export class FocusGroup {
   constructor(scene, { onCancel = null, initial = 0 } = {}) {
     this.scene = scene;
@@ -11,6 +31,7 @@ export class FocusGroup {
     this.onCancel = onCancel;
     this.initial = initial;
     this.enabled = true;
+    this.guard = new KeyGuard();
     const kb = scene.input.keyboard;
     this._onKey = (e) => this._key(e);
     kb.on('keydown', this._onKey);
@@ -86,6 +107,7 @@ export class FocusGroup {
 
   _key(e) {
     if (!this.enabled || !this.scene.sys.isActive()) return;
+    if (this.guard.skip(e)) return; // one key press acts once, even if Phaser re-dispatches it
     if (this.current()?.handleKey?.(e)) return; // e.g. a slider consumes ←/→
     switch (e.code) {
       case 'ArrowLeft': this.move(-1, 0); break;

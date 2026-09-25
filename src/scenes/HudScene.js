@@ -7,6 +7,7 @@ import { CHAOS_TWISTS } from '../data/scenarios.js';
 import { SIM } from '../sim/simulation.js';
 import { textStyle } from '../ui/theme.js';
 import { Button } from '../ui/components.js';
+import { KeyGuard } from '../ui/focus.js';
 import { tag, floatText, signed, confetti } from '../ui/widgets.js';
 import { RoleCard, ClockCard, StabilityCard } from '../ui/hud/top-bar.js';
 import { SystemsPanel } from '../ui/hud/systems-panel.js';
@@ -83,6 +84,7 @@ export default class HudScene extends Phaser.Scene {
     on('end', (e) => this.onEnd(e));
 
     // input
+    this.keyGuard = new KeyGuard();
     this.keyHandler = (e) => this.onKey(e);
     this.input.keyboard.on('keydown', this.keyHandler);
     this.events.once('shutdown', () => this.cleanup());
@@ -177,6 +179,7 @@ export default class HudScene extends Phaser.Scene {
   }
 
   onKey(e) {
+    if (this.keyGuard.skip(e)) return; // Phaser may re-dispatch queued events on slow frames
     if (this.tutorial || this.run.demo || this.sim.ended) return;
     if (this.pauseMenu) return; // the pause menu's focus group handles keys
     if (this.scene.isActive('settings')) return;
@@ -243,6 +246,30 @@ export default class HudScene extends Phaser.Scene {
     this.ability.update(time);
     this.card.update();
     this.updateCollapse(time);
+    this.updateForecast();
+  }
+
+  /** Scientist's Rapid Analysis: the revealed crises stay listed until they arrive. */
+  updateForecast() {
+    const ids = this.sim.forecast;
+    const key = ids.join(',');
+    if (key === this.forecastKey) return;
+    this.forecastKey = key;
+    this.forecastStrip?.destroy();
+    this.forecastStrip = null;
+    if (!ids.length) return;
+    const c = this.add.container(0, 116).setDepth(30);
+    const items = [tag(this, 0, 0, 'NEXT CRISES', { color: 'cyan', size: 16, height: 36, pad: 10, iconFrame: 'abl-analysis' })];
+    for (const id of ids) items.push(tag(this, 0, 0, this.sim.eventTitle(id).toUpperCase(), { color: 'violet', size: 16, height: 36, pad: 10 }));
+    let x = 0;
+    for (const t of items) {
+      t.x = x;
+      x += t.width + 8;
+      c.add(t);
+    }
+    c.x = FREE_CX - (x - 8) / 2;
+    c.y = 136;
+    this.forecastStrip = c;
   }
 
   updateCollapse(time) {
@@ -254,7 +281,7 @@ export default class HudScene extends Phaser.Scene {
       this.collapseTag?.destroy();
       this.collapseTag = null;
       if (danger) {
-        this.collapseTag = tag(this, 0, 150, `CITY COLLAPSE IN ${left} s: RAISE STABILITY ABOVE ${SIM.collapseStability + 3}%`, { color: 'red', size: 26, height: 56, pad: 22, iconFrame: 'ui-warning' });
+        this.collapseTag = tag(this, 0, 200, `CITY COLLAPSE IN ${left} s: RAISE STABILITY ABOVE ${SIM.collapseStability + 3}%`, { color: 'red', size: 26, height: 56, pad: 22, iconFrame: 'ui-warning' });
         this.collapseTag.x = FREE_CX - this.collapseTag.width / 2;
         this.collapseTag.setDepth(70);
       }

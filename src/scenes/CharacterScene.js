@@ -117,12 +117,13 @@ export default class CharacterScene extends Phaser.Scene {
     this.tweens.add({ targets: [name, role], alpha: 1, x: '+=10', duration: 300, delay: 300 });
     bus.emit('sfx', 'reveal');
 
-    // ability reveal
-    const box = panel(this, x0 + 410, y0 + 290, W - 450, 200, 'card-inset').setAlpha(0);
-    const abIcon = this.add.image(x0 + 480, y0 + 360, 'icons', character.ability.icon).setScale(0);
-    const abLabel = this.add.text(x0 + 540, y0 + 312, 'SPECIAL ABILITY', textStyle({ size: 20, weight: '900', color: UI.violetDeep })).setAlpha(0);
-    const abName = this.add.text(x0 + 540, y0 + 340, character.ability.name.toUpperCase(), textStyle({ size: 32, weight: '900', wrap: W - 600 })).setAlpha(0);
-    const abText = this.add.text(x0 + 440, y0 + 410, character.ability.description, textStyle({ size: 19, weight: '700', color: UI.inkSoft, wrap: W - 500 })).setAlpha(0);
+    // ability reveal (box sized to its text)
+    const abLabel = this.add.text(x0 + 540, y0 + 308, 'SPECIAL ABILITY', textStyle({ size: 20, weight: '900', color: UI.violetDeep })).setAlpha(0);
+    const abName = this.add.text(x0 + 540, y0 + 334, character.ability.name.toUpperCase(), textStyle({ size: 28, weight: '900', wrap: W - 590, lineSpacing: -4 })).setAlpha(0);
+    const abText = this.add.text(x0 + 436, y0 + 344 + Math.max(56, abName.height + 12), character.ability.description, textStyle({ size: 18, weight: '700', color: UI.inkSoft, wrap: W - 480 })).setAlpha(0);
+    const boxH = abText.y + abText.height + 18 - (y0 + 290);
+    const box = panel(this, x0 + 410, y0 + 290, W - 450, boxH, 'card-inset').setAlpha(0);
+    const abIcon = this.add.image(x0 + 480, y0 + 350, 'icons', character.ability.icon).setScale(0);
     layer.add([box, abIcon, abLabel, abName, abText]);
     this.time.delayedCall(700, () => {
       bus.emit('sfx', 'ability');
