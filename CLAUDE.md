@@ -22,8 +22,8 @@ These decisions override the defaults in `.claude/skills/` (see `.claude/skills/
 - Pixel art is drawn at native size and displayed at **3×** (world camera zoom 3; UI sprites
   scaled 3). Config uses `render.smoothPixelArt: true` (crisp pixels, smooth edges, no flicker
   when the camera zooms). Do not mix in `pixelArt`/`roundPixels`.
-- World: 640×360 native px, 16 px tiles, 3/4 top-down view, light from the upper left,
-  bottom-center anchors, depth = baseline y.
+- World: 720×400 native px (45×25 tiles of 16 px), 3/4 top-down view, light from the upper
+  left, bottom-center anchors, depth = baseline y.
 - Text is code-native (Phaser Text) at 1:1 scale on integer positions. Never bake text into art.
 
 ## Architecture rules
@@ -39,6 +39,8 @@ These decisions override the defaults in `.claude/skills/` (see `.claude/skills/
   event-driven, not polled.
 - Reset run state in scene `init()`, remove global listeners on `shutdown`.
 - Persistence goes through `src/core/storage.js` (versioned schema, validation, backup key).
+- Game rules, content and balance numbers are documented in `docs/GAME-DESIGN.md`. Update it when
+  a rule changes.
 
 ## Art pipeline
 
@@ -57,6 +59,11 @@ contact sheets in `tools/art/out/` before committing. Never hand-edit files in `
 | `npm test` | Unit tests (simulation, data validation, storage) — Node test runner |
 | `npm run test:e2e` | Playwright browser tests (boots the real game) |
 | `npm run balance` | Monte Carlo balance report over characters × scenarios × bot policies |
+| `npm run styles` | Play-style calibration with deliberately biased bot personas |
+
+URL flags: `?exhibition` (kiosk mode), `?test` (debug hooks on `window.__NEXUS__`; with
+`&start=game&role=<id>&theme=<id>&seed=<text>` it starts that exact run). Screenshot QA:
+`node tools/qa/shot.mjs --url "<url>" --wait <scene> [--steps steps.json] --out shot.png`.
 
 ## Quality bar
 
