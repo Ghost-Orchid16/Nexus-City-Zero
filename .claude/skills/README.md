@@ -35,6 +35,8 @@ skills for a request. It reads engine skills first, then discipline skills.
 | `save-systems` | Versioned, validated persistence (localStorage scoreboard, achievements, settings). |
 | `input-systems` | Action mapping, keyboard, mouse and touch, accessible controls. |
 | `performance-optimization` | Profile-first frame budgets, pooling, draw calls, asset budgets. |
+| `camera-systems` | 2D follow, deadzone, smoothing, bounds clamping and zoom framing for the city map. |
+| `physics-tuning` | Fixed timestep, render interpolation, and stable deterministic simulation ticks. |
 | `prototype-fast` | Timeboxed prototypes that answer one question, with keep/kill criteria. |
 
 ### Browser game architecture and QA (PlayableIntelligence/game-creator)
@@ -103,7 +105,7 @@ Start with `design-coherence-engine`. It is the meta skill that picks and coordi
   from an earlier setup were removed. They remain in git history (commit `a19d695`).
 - **Not relevant to this game:** the genre templates (platformer, roguelike, RPG, FPS, tower
   defense, card game, visual novel, survival-crafting, puzzle), `dialogue-systems`,
-  `shader-programming`, `physics-tuning`, `camera-systems`, `level-design`, the Steam and itch
+  `shader-programming`, `level-design` (overlaps `level-encounter-planner`), the Steam and itch
   publishing workflows, and `game-jam`.
 - **Duplicates or services:** other game-creator and AlterLab skills that repeat installed ones,
   plus monetization, multiplayer, hosted-deploy and promo pipelines. game-creator's `use-template`
