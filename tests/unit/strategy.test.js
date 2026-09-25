@@ -1,7 +1,7 @@
 // GAMEPLAY STRATEGY ANALYSIS: styles must come from behavior, and explanations from real numbers.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { STYLES } from '../../src/sim/strategy-analysis.js';
+import { STYLES, NO_STYLE, MIN_DECISIONS } from '../../src/sim/strategy-analysis.js';
 import { makeSim, play } from './helpers.js';
 
 const PERSONAS = {
@@ -43,4 +43,26 @@ test('a run with no decisions is not labeled as if it had a strategy', () => {
   const c = sim.analysis.classify(sim);
   assert.equal(c.metrics.decisions, 0);
   assert.ok(Object.values(c.scores).every((v) => v === 0));
+  assert.equal(c.style, null);
+  assert.equal(c.name, NO_STYLE.name);
+  assert.equal(c.runnerUp, null);
+  // only facts about the run: no decision times or risk preferences that were never measured
+  assert.match(c.reasons[0], new RegExp(`^You answered 0 of ${c.metrics.ignored} crises`));
+  assert.ok(c.reasons.every((r) => !/decision time|risk/i.test(r)), c.reasons.join(' | '));
+});
+
+test(`fewer than ${MIN_DECISIONS} answered crises is too little evidence for a play style`, () => {
+  const sim = makeSim({ seed: 'sparse' });
+  sim.update(0.1);
+  let answered = 0;
+  for (let i = 0; i < 20000 && !sim.ended; i++) {
+    const ev = sim.activeEvent;
+    if (ev && answered < MIN_DECISIONS - 1) {
+      const open = ev.choices.find((ch) => !ch.locked);
+      if (open && sim.choose(open.id, { decisionTime: 4 })) answered++;
+    }
+    sim.update(0.1);
+  }
+  assert.equal(sim.analysis.classify(sim).style, null);
+  assert.equal(sim.decisions.filter((d) => !d.ignored).length, MIN_DECISIONS - 1);
 });

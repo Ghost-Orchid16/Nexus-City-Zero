@@ -23,7 +23,7 @@ const iconFor = (category) => CATEGORY_ICON[category] || RESOURCE_BY_ID[category
 
 /** Timeline node for one decision (focusable). */
 class Node extends Phaser.GameObjects.Container {
-  constructor(scene, x, y, decision, onPick) {
+  constructor(scene, x, y, decision, onPick, mark = null) {
     super(scene, x, y);
     this.decision = decision;
     this.onPick = onPick;
@@ -37,6 +37,7 @@ class Node extends Phaser.GameObjects.Container {
     this.add(scene.add.image(0, -1, 'icons', d.ignored ? 'ui-cross' : iconFor(d.category)).setScale(iconFor(d.category).startsWith('scn') ? 1.3 : 1.8));
     this.clockLabel = scene.add.text(0, 40, formatClock(d.clock), textStyle({ size: 15, weight: '900', color: UI.white, stroke: UI.ink, strokeThickness: 5 })).setOrigin(0.5);
     this.add(this.clockLabel);
+    if (mark) this.add(scene.add.image(22, -22, 'icons', mark).setScale(1.5));
     this.setSize(60, 60);
     disc.setInteractive({ useHandCursor: true });
     disc.on('pointerover', () => this.emit('hover', this));
@@ -101,34 +102,41 @@ export default class TimelineScene extends Phaser.Scene {
     panel(this, x, y, w, h, 'card');
     const chartY = y + 124;
     const markers = [
+      ...sim.decisions.map((d) => ({ t: d.t, kind: 'decision' })),
       ...sim.cascades.map((c) => ({ t: c.t, kind: 'cascade' })),
       ...sim.log.filter((e) => e.type === 'ability').map((e) => ({ t: e.t, kind: 'ability' })),
       ...sim.log.filter((e) => e.type === 'failure').map((e) => ({ t: e.t, kind: 'failure' }))
     ];
     this.chart = stabilityChart(this, x + 16, chartY, w - 32, h - 136, { series: sim.series, markers, frame: 'card-inset' });
-    this.add.text(x + 20, y + 20, 'DECISIONS · pick one to explore it', textStyle({ size: 15, weight: '900', color: UI.inkSoft }));
+    this.add.text(x + 20, y + 18, 'DECISIONS · pick one to explore it', textStyle({ size: 15, weight: '900', color: UI.inkSoft })).setOrigin(0, 0.5);
     // legend
-    const legend = [['badge-green', 'helped the city'], ['badge-cream', 'held steady'], ['badge-red', 'city got worse'], ['badge-stone', 'no response']];
+    const report = session.report;
+    const legend = [['ui', 'badge-green', 'helped the city'], ['ui', 'badge-cream', 'held steady'], ['ui', 'badge-red', 'city got worse'], ['ui', 'badge-stone', 'no response']];
+    if (report?.bestDecision !== null && report?.bestDecision !== undefined) legend.push(['icons', 'ui-crown', 'biggest boost']);
+    if (report?.worstDecision !== null && report?.worstDecision !== undefined) legend.push(['icons', 'ui-down', 'biggest drop']);
     let lx = x + w - 20;
-    for (const [frame, text] of legend.reverse()) {
-      const t = this.add.text(lx, y + 20, text, textStyle({ size: 15, weight: '900', color: UI.inkSoft })).setOrigin(1, 0.5);
+    for (const [atlas, frame, text] of legend.reverse()) {
+      const t = this.add.text(lx, y + 18, text, textStyle({ size: 15, weight: '900', color: UI.inkSoft })).setOrigin(1, 0.5);
       lx -= t.width + 8;
-      this.add.image(lx - 10, y + 20, 'ui', frame).setScale(1.2);
+      this.add.image(lx - 10, y + 18, atlas, frame).setScale(atlas === 'ui' ? 1.2 : 1.1);
       lx -= 34;
     }
-    // decision nodes, staggered on two rows so they never overlap
+    // decision nodes sit above their moment on the chart (the ticks on its baseline); crowded
+    // nodes are nudged sideways just enough that none overlap
     const plot = this.chart.plot;
+    const xs = sim.decisions.map((d) => x + 16 + plot.px(d.t));
+    const lo = x + 44;
+    const hi = x + w - 44;
+    const gap = xs.length > 1 ? Math.min(66, (hi - lo) / (xs.length - 1)) : 0;
+    for (let i = 0; i < xs.length; i++) xs[i] = Math.max(xs[i], i ? xs[i - 1] + gap : lo);
+    for (let i = xs.length - 1; i >= 0; i--) xs[i] = Math.min(xs[i], i < xs.length - 1 ? xs[i + 1] - gap : hi);
     this.nodes = [];
-    let lastTop = -999;
-    for (const d of sim.decisions) {
-      const nx = x + 16 + plot.px(d.t);
-      const lower = nx - lastTop < 62; // too close to its neighbor: drop to the lower row
-      if (!lower) lastTop = nx;
-      const node = new Node(this, nx, y + (lower ? 94 : 62), d, (dec, silent) => this.pick(dec, silent));
-      if (lower) node.clockLabel.setVisible(false);
-      this.nodes.push(node);
+    sim.decisions.forEach((d, i) => {
+      const mark = d.index === report?.bestDecision ? 'ui-crown' : d.index === report?.worstDecision ? 'ui-down' : null;
+      const node = new Node(this, xs[i], y + 68, d, (dec, silent) => this.pick(dec, silent), mark);
+      this.nodes.push(node); // before focus.add: focusing a node picks it, and pick() reads this.nodes
       this.focus.add(node);
-    }
+    });
   }
 
   pick(decision, silent = false) {
@@ -169,7 +177,11 @@ export default class TimelineScene extends Phaser.Scene {
     const before = Math.round(d.stabilityBefore);
     const later = Math.round(d.stabilityLater ?? d.stabilityAfter);
     const delta = later - before;
-    add(this.add.text(x + 28, y + 246, `City stability ${before}% → ${later}% 15 s later`, textStyle({ size: 21, weight: '900', color: delta >= 2 ? UI.teal : delta <= -2 ? UI.red : UI.inkSoft })));
+    const change = this.add.text(x + 28, y + 246, `City stability ${before}% → ${later}% 15 s later`, textStyle({ size: 21, weight: '900', color: delta >= 2 ? UI.teal : delta <= -2 ? UI.red : UI.inkSoft }));
+    add(change);
+    const report = session.report;
+    const standout = d.index === report?.bestDecision ? ['BIGGEST BOOST OF THE RUN', 'yellow', 'ui-crown'] : d.index === report?.worstDecision ? ['BIGGEST DROP OF THE RUN', 'coral', 'ui-down'] : null;
+    if (standout) add(tag(this, x + 44 + change.width, y + 246 + change.height / 2, standout[0], { color: standout[1], size: 14, height: 30, pad: 10, iconFrame: standout[2] }));
     add(this.add.text(x + 28, y + 276, `Decided in ${d.decisionTime.toFixed(1)} s${d.followUp ? ` · triggered: ${this.sim.eventTitle(d.followUp)}` : ''}`, textStyle({ size: 17, weight: '800', color: UI.inkSoft })));
 
     add(this.add.text(x + 28, y + 314, 'WHAT IF YOU HAD CHOSEN…', textStyle({ size: 20, font: 'display', color: UI.violetDeep })));
@@ -232,8 +244,11 @@ export default class TimelineScene extends Phaser.Scene {
     L.add(this.add.text(cx + 12, cy + ch + 16, '■ what you did', textStyle({ size: 16, weight: '900', color: UI.teal })).setOrigin(0, 0.5));
     L.add(this.add.text(cx + cw - 12, cy + ch + 16, '■ alternative', textStyle({ size: 16, weight: '900', color: UI.orangeDeep })).setOrigin(1, 0.5));
     const verdict = r.verdict === 'better' ? ['THE ALTERNATIVE WAS BETTER', 'green'] : r.verdict === 'worse' ? ['YOUR CHOICE WAS BETTER', 'teal'] : ['ABOUT THE SAME', 'yellow'];
-    L.add(tag(this, cx, cy + ch + 58, `${verdict[0]} (${signed(r.stabilityDiff)} stability)`, { color: verdict[1], size: 18, height: 40, pad: 12 }));
-    const notes = [];
+    L.add(tag(this, cx, cy + ch + 58, verdict[0], { color: verdict[1], size: 18, height: 40, pad: 12 }));
+    const diff = Math.abs(r.stabilityDiff);
+    const notes = [diff < 0.05
+      ? `After ${r.horizon} s, city stability is the same either way.`
+      : `After ${r.horizon} s, city stability is ${diff} point${diff === 1 ? '' : 's'} ${r.stabilityDiff > 0 ? 'higher' : 'lower'} with the alternative.`];
     if (r.alt.cascades.length) notes.push(`Alternative: ${r.alt.cascades.map((id) => RESOURCE_BY_ID[id].name).join(', ')} cascade${r.alt.cascades.length > 1 ? 's' : ''}`);
     if (r.actual.cascades.length) notes.push(`Your choice: ${r.actual.cascades.map((id) => RESOURCE_BY_ID[id].name).join(', ')} cascade${r.actual.cascades.length > 1 ? 's' : ''}`);
     notes.push('Your final score is not changed.');

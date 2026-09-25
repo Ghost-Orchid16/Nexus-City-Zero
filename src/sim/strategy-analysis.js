@@ -22,6 +22,15 @@ export const STYLES = {
   adaptive: { name: 'Adaptive Commander', blurb: 'You changed strategy as consequences hit and handled many kinds of crises.' }
 };
 
+/** Below this many answered crises there is too little evidence to name a play style. */
+export const MIN_DECISIONS = 3;
+
+/** Reported instead of a play style when too few crises were answered to measure one. */
+export const NO_STYLE = {
+  name: 'Not Enough Decisions',
+  blurb: `A play style is measured from your choices, and it takes at least ${MIN_DECISIONS} answered crises to read one.`
+};
+
 /** How risky a response is: explicit follow-up risk + size of its side effects + boldness. */
 export function riskScore(choice, effects = choice?.effects || {}) {
   const neg = Object.entries(effects).filter(([k, v]) => k !== 'budget' && v < 0).reduce((s, [, v]) => s - v, 0);
@@ -207,6 +216,9 @@ export class StrategyAnalysis {
   classify(sim) {
     const m = this.metrics(sim);
     const scores = this.scores(m);
+    if (m.decisions < MIN_DECISIONS) {
+      return { style: null, name: NO_STYLE.name, blurb: NO_STYLE.blurb, scores, runnerUp: null, metrics: m, reasons: this.sparseReasons(m) };
+    }
     const ranked = Object.entries(scores).sort((x, y) => y[1] - x[1]);
     const style = ranked[0][0];
     return { style, name: STYLES[style].name, blurb: STYLES[style].blurb, scores, runnerUp: ranked[1][0], metrics: m, reasons: this.reasons(style, m) };
@@ -255,5 +267,16 @@ export class StrategyAnalysis {
     if (m.patternStreak >= 4) extra.push(`Repeated pattern: the same option slot ${m.patternStreak} times in a row.`);
     const common = [`Decisions made: ${m.decisions}${m.ignored ? ` (${m.ignored} missed)` : ''}.`];
     return [...lines[style].filter(Boolean), ...extra, ...common].slice(0, 4);
+  }
+
+  /** What can honestly be said about a run with too few answered crises. */
+  sparseReasons(m) {
+    const crises = m.decisions + m.ignored;
+    return [
+      `You answered ${m.decisions} of ${crises} ${crises === 1 ? 'crisis' : 'crises'}.`,
+      m.ignored ? `${m.ignored} ${m.ignored === 1 ? 'crisis' : 'crises'} ran out of time, so the damage played out unchecked.` : null,
+      m.cascades ? `${m.cascades} cascade${m.cascades === 1 ? '' : 's'} spread from failing systems to the ones that depend on them.` : null,
+      m.abilityUses ? `Special ability used ${m.abilityUses}×.` : 'Your special ability was never used.'
+    ].filter(Boolean);
   }
 }

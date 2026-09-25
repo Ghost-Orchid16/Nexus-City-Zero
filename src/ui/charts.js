@@ -69,7 +69,9 @@ export function stabilityChart(scene, x, y, w, h, { series, markers = [], compar
       continue;
     }
     const at = series.reduce((best, s) => (Math.abs(s.t - m.t) < Math.abs(best.t - m.t) ? s : best), series[0]);
-    c.add(scene.add.image(mx, py(at.stability) - 18, 'icons', icons[m.kind] || 'ui-info').setScale(1.4));
+    // above the curve, or below it when the curve runs along the top of the chart
+    const my = py(at.stability) - 18 < pad.t + 6 ? py(at.stability) + 18 : py(at.stability) - 18;
+    c.add(scene.add.image(mx, my, 'icons', icons[m.kind] || 'ui-info').setScale(1.4));
   }
   if (highlight !== null) {
     g.lineStyle(3, hex(UI.violetDeep), 0.9);

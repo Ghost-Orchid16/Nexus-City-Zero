@@ -165,7 +165,12 @@ test('a full run reaches the report, timeline and What-If without changing the s
   await page.mouse.click(290, 1012); // TIMELINE & WHAT-IF
   await waitScene(page, 'timeline');
   const before = await page.evaluate(() => JSON.stringify(window.__NEXUS__.game.scene.getScene('results').report));
-  await page.mouse.click(268, 832); // first alternative
+  // click the first alternative that was affordable at the time (the run is random)
+  const alt = await page.evaluate(() => {
+    const b = window.__NEXUS__.scene('timeline').detailButtons.find((x) => !x.disabled);
+    return { x: b.x, y: b.y };
+  });
+  await page.mouse.click(alt.x, alt.y);
   await page.waitForTimeout(800);
   const shown = await page.evaluate(() => window.__NEXUS__.scene('timeline').whatIfLayer.list.length);
   expect(shown).toBeGreaterThan(10);

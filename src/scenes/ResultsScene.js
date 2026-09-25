@@ -110,7 +110,7 @@ export default class ResultsScene extends Phaser.Scene {
       { icon: 'ui-check', label: 'DECISIONS MADE', value: `${r.decisionsMade}`, sub: r.decisionsMissed ? `${r.decisionsMissed} crises unanswered` : 'no crisis ignored' },
       { icon: 'ui-cascade', label: 'CASCADE EVENTS', value: `${r.cascades}`, sub: r.blockedCascades.length ? `${r.blockedCascades.length} contained by your ability` : `${r.cascadesAnswered} answered at the source` },
       { icon: 'ui-warning', label: 'CRITICAL FAILURES', value: `${r.criticalFailures}`, sub: 'systems that hit the failure line' },
-      { icon: 'ui-star', label: 'RESOURCE EFFICIENCY', value: `${r.efficiency}`, sub: `survival per budget spent (${r.budgetSpent})` }
+      { icon: 'ui-star', label: 'RESOURCE EFFICIENCY', value: `${r.efficiency}`, sub: `${r.survival}% survival for ${r.budgetSpent} budget spent` }
     ];
     tiles.forEach((t, i) => {
       const tx = x + 20 + (i % 2) * ((w - 50) / 2 + 10);
@@ -119,8 +119,10 @@ export default class ResultsScene extends Phaser.Scene {
       panel(this, tx, ty, tw, 76, 'card');
       this.add.image(tx + 30, ty + 38, 'icons', t.icon).setScale(2);
       this.add.text(tx + 58, ty + 18, t.label, textStyle({ size: 14, weight: '900', color: UI.inkSoft })).setOrigin(0, 0.5);
-      this.add.text(tx + 58, ty + 46, t.value, textStyle({ size: 30, weight: '900' })).setOrigin(0, 0.5);
-      this.add.text(tx + tw - 12, ty + 50, t.sub, textStyle({ size: 13, weight: '800', color: UI.inkSoft, align: 'right', wrap: tw - 130 })).setOrigin(1, 0.5);
+      const value = this.add.text(tx + 58, ty + 46, t.value, textStyle({ size: 30, weight: '900' })).setOrigin(0, 0.5);
+      // the note takes whatever room the value leaves, so wide values never run into it
+      const room = tw - 12 - (58 + value.width + 12);
+      this.add.text(tx + tw - 12, ty + 50, t.sub, textStyle({ size: 13, weight: '800', color: UI.inkSoft, align: 'right', wrap: room })).setOrigin(1, 0.5);
     });
   }
 
@@ -159,14 +161,14 @@ export default class ResultsScene extends Phaser.Scene {
     body.add(this.add.text(x + 30, cy, 'BASED ON YOUR GAMEPLAY', textStyle({ size: 16, weight: '900', color: UI.teal })));
     cy += 30;
     for (const reason of st.reasons) {
-      body.add(this.add.image(x + 42, cy + 13, 'icons', 'ui-check').setScale(1.5));
+      body.add(this.add.image(x + 42, cy + 13, 'icons', st.style ? 'ui-check' : 'ui-warning').setScale(1.5));
       const t = this.add.text(x + 64, cy, reason, textStyle({ size: 19, weight: '700', wrap: w - 100 }));
       body.add(t);
       cy += t.height + 12;
     }
-    const runner = STYLES[st.runnerUp];
     const adaptive = `Adaptive engine: crisis level ended at ${Math.round(((this.report.finalIntensity - 0.6) / 0.9) * 4) + 1}/5 after ${this.report.adaptiveChanges} adjustment${this.report.adaptiveChanges === 1 ? '' : 's'}.`;
-    body.add(this.add.text(x + 30, y + h - 88, `Close second: ${runner.name}`, textStyle({ size: 18, weight: '900', color: UI.inkSoft })));
+    const note = st.style ? `Close second: ${STYLES[st.runnerUp].name}` : 'Answer crises with a click or keys 1–4 before their timers run out.';
+    body.add(this.add.text(x + 30, y + h - 88, note, textStyle({ size: 18, weight: '900', color: UI.inkSoft, wrap: w - 60 })));
     body.add(this.add.text(x + 30, y + h - 56, adaptive, textStyle({ size: 17, weight: '800', color: UI.inkSoft, wrap: w - 60 })));
     // "analyzing…" then reveal
     const analyzing = this.add.text(x + 30, y + 130, 'Analyzing your decisions…', textStyle({ size: 26, weight: '900', color: UI.inkSoft }));
