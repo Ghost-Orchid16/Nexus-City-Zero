@@ -77,8 +77,8 @@ export function contactSheet(items, { scale = 3, columns = 8, cell = 0 } = {}) {
     const row = Math.floor(i / columns);
     const ox = col * cw + 4;
     const oy = row * ch + 4;
-    sheet.blit(it.canvas.scaled(scale), ox, oy);
-    drawLabel(sheet, it.name.slice(0, Math.floor((cw - 6) / 4)), ox, oy + maxH + 4, '#261a3a');
+    drawLabel(sheet, it.name.slice(0, Math.floor((cw - 6) / 4)), ox, oy, '#261a3a');
+    sheet.blit(it.canvas.scaled(scale), ox, oy + 9);
   });
   return sheet;
 }

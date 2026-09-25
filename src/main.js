@@ -25,6 +25,9 @@ const config = {
     powerPreference: 'high-performance'
   },
   input: { activePointers: 2 },
+  // Automated tests render with a software GPU at a few frames per second; raw deltas keep
+  // their game time in step with the wall clock (smoothing would turn slow frames into slow-mo).
+  fps: { smoothStep: !new URLSearchParams(window.location.search).has('test') },
   disableContextMenu: true,
   scene: SCENES
 };

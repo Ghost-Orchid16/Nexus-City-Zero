@@ -13,7 +13,10 @@ export default class BootScene extends Phaser.Scene {
     const timeout = new Promise((resolve) => setTimeout(resolve, 3000));
     Promise.race([fonts, timeout]).then(() => {
       document.getElementById('boot-splash')?.classList.add('hidden');
-      this.scene.start('title');
+      // `?test&start=<scene>` lets automated tests and visual QA jump straight to a screen.
+      const params = new URLSearchParams(window.location.search);
+      if ((params.has('test') || params.has('debug')) && params.get('start')) this.registry.set('startScene', params.get('start'));
+      this.scene.start('preload');
     });
   }
 }
