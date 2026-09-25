@@ -1,44 +1,54 @@
 # NEXUS: CITY ZERO — project-local Claude Code skills
 
-Game-development skills vendored from four public MIT-licensed repositories.
-Claude Code discovers each one at `.claude/skills/<skill-name>/SKILL.md`, and the folder
-name is the slash command (for example `/threejs-game-director`). Skills must sit
-one level deep, so the layout is flat and this file does the grouping.
+Game-development skills vendored from public open-source repositories. Claude Code discovers
+each one at `.claude/skills/<skill-name>/SKILL.md`, and the folder name is the slash command
+(for example `/phaser-core`). Skills must sit one level deep, so the layout is flat and this
+file does the grouping.
 
-Skill folders are copied verbatim from upstream. The only additions are the
-supporting files noted under "Local additions" below.
+**Project direction:** NEXUS is a **2D** browser game built with **Phaser 4** (the version
+`phaser-core` targets). The repository-root `CLAUDE.md` records the project decisions, and those
+decisions override skill defaults.
+
+## Start here
+
+`router` detects the engine from `package.json` (`phaser` → Phaser) and loads the minimal set of
+skills for a request. It reads engine skills first, then discipline skills.
 
 ## Skills by area
 
-### Browser game engineering: Three.js (majidmanzarpour/threejs-game-skills, all 9)
+### Engine: Phaser 4 (gamedev-skills/awesome-gamedev-agent-skills)
 | Skill | Use for |
 |---|---|
-| `threejs-game-director` | Entry point for building, upgrading, and finishing a Three.js game. Routes to the siblings below. |
-| `threejs-gameplay-systems` | Core loop, entities, input, camera, collision/physics, scoring, game feel. Includes a Vite + TypeScript scaffold. |
-| `threejs-game-ui-designer` | HUDs, menus, overlays, touch UI, responsive layout. |
-| `threejs-aaa-graphics-builder` | Art direction, materials, shaders, VFX, lighting, LOD/instancing, visual scorecard. |
-| `threejs-debug-profiler` | Blank canvases, runtime bugs, draw calls, memory, shader cost. |
-| `threejs-qa-release` | Playtest QA, bot playtests, visual regression, production build checks. |
-| `threejs-3d-generator` | Optional. Generated 3D models via Tripo (`TRIPO_API_KEY`). |
-| `threejs-image-generator` | Optional. Generated 2D art via Gemini (`GEMINI_API_KEY`). |
-| `threejs-audio-generator` | Optional. Generated audio via ElevenLabs (`ELEVENLABS_API_KEY`). |
+| `phaser-core` | Game config, Scene lifecycle, loader, cameras, cross-scene communication (Phaser 4.2). |
+| `phaser-arcade-physics` | Arcade bodies, velocity, colliders and overlaps, if moving objects need physics. |
 
-The three generators are inert without their keys. The director falls back to procedural assets.
-
-### Browser game engineering: engine-agnostic and 2D (PlayableIntelligence/game-creator)
+### Engineering disciplines (gamedev-skills/awesome-gamedev-agent-skills)
 | Skill | Use for |
 |---|---|
-| `game-architecture` | EventBus, centralized state, constants, restart safety, delta time, pooling, disposal. |
-| `threejs-perf` | Instancing for hundreds of static or moving objects (buildings, vehicles, crowds) and draw-call budgets. |
-| `phaser` | 2D option: Phaser 3 scene-based architecture, if NEXUS goes 2D. |
-| `game-qa` | Playwright testing for any browser game: deterministic clock control, gameplay invariants, visual regression, mobile. |
+| `create-game-assets` | Art direction brief, palette roles, asset manifest, family production, contact-sheet QA, provenance. |
+| `game-ui-ux` | HUD and menu architecture: reference-resolution scaling, screen stack, focus navigation, event-driven HUD. |
+| `game-feel` | Juice: eased tweens, shake tiers, flashes, feedback that returns to rest, reduced-motion option. |
+| `audio-design` | Buses and mixing in dB, ducking, adaptive music layers, SFX variation. |
+| `game-ai` | FSMs, behavior trees, steering, pathfinding (city traffic and NPC movement). |
+| `ai-behavior-trees-utility-ai` | Utility scoring with response curves and hysteresis (the adaptive director's decisions). |
+| `procedural-gen` | Seeded deterministic RNG and weighted tables (randomized runs, reproducible replays). |
+| `save-systems` | Versioned, validated persistence (localStorage scoreboard, achievements, settings). |
+| `input-systems` | Action mapping, keyboard, mouse and touch, accessible controls. |
+| `performance-optimization` | Profile-first frame budgets, pooling, draw calls, asset budgets. |
+| `prototype-fast` | Timeboxed prototypes that answer one question, with keep/kill criteria. |
+
+### Browser game architecture and QA (PlayableIntelligence/game-creator)
+| Skill | Use for |
+|---|---|
+| `game-architecture` | EventBus, centralized state, constants, restart safety, delta time, disposal. |
+| `game-qa` | Playwright testing for browser games: clock control, gameplay invariants, visual regression. |
 
 ### Game design: systems, difficulty, and balance (AlterLab-IEU/AlterLab_GameForge)
 | Skill | Use for |
 |---|---|
-| `game-designer` | Mechanics, progression, dynamic difficulty adjustment (DDA), reward psychology, WFC procedural generation. |
+| `game-designer` | Mechanics, progression, dynamic difficulty adjustment (DDA), reward psychology. |
 | `game-balance-check` | Economy and difficulty validation: Flow channel, rubber-banding, Monte Carlo, reward pacing. |
-| `game-accessibility-specialist` | Accessibility audits: colorblind modes, remapping, difficulty options, motor accommodations. |
+| `game-accessibility-specialist` | Accessibility: colorblind-safe states, remapping, difficulty options, motor accommodations. |
 | `game-code-review` | Game-specific code review: frame independence, hot paths, state machines, resource lifecycle. |
 
 ### Game design: full design lifecycle (baxatron-git/claude-game-design-suite, all 22)
@@ -51,64 +61,59 @@ Start with `design-coherence-engine`. It is the meta skill that picks and coordi
 - **Proof:** `prototype-scope-definer`, `playtest-protocol-designer`, `design-iteration-tracker`, `ui-ux-systems-designer`
 - **Delivery:** `gdd-author`, `scope-feature-prioritizer`, `technical-design-bridge`
 
-## Notes for NEXUS
+## Notes
 
-- **Project decisions override skill defaults.** Some skills assume a particular stack or
-  publishing target. `game-architecture`, `phaser` and `game-qa` assume the Play.fun widget
-  ("no title screen", "no in-game score HUD"). The Three.js suite defaults to TypeScript + Vite,
-  and `game-architecture`/`phaser` default to JavaScript. Record the NEXUS choices in a root
-  `CLAUDE.md` once they are made.
-- **Nothing was installed.** Some skills tell you to add npm packages (for example `three`, `vite`,
-  `@playwright/test`) to the game project when it is built. Those installs are for the game,
-  not for the skills.
-- **Template project inside the skills tree.**
-  `threejs-gameplay-systems/assets/threejs-vite-game/` is the scaffold that the skill copies
-  from, and it has its own `package.json`. When you set up lint, test or TypeScript tooling
-  for NEXUS, exclude `.claude/` from their globs.
+- **Skill defaults that don't apply to NEXUS.** `game-architecture` and `game-qa` assume the
+  Play.fun widget ("no title screen", "no in-game score HUD"). NEXUS has a title screen and a
+  full HUD.
+- **The router knows skills that are not installed** (Godot, Unity, Unreal, three.js, PixiJS,
+  genre templates, and others). When it names one, fall back to the installed skills listed
+  above and state the gap, as the router's §6 instructs.
+- **`create-game-assets` helper scripts** (`scripts/*.py`) need Python and Pillow, which are
+  not installed. NEXUS generates and checks its art with its own Node tooling (see `CLAUDE.md`).
 
 ## AlterLab role names → installed equivalents
-
-The four AlterLab skills sometimes say to hand off to AlterLab team roles that were not
-installed. Use these instead:
 
 | AlterLab role mentioned | Installed equivalent |
 |---|---|
 | `game-creative-director` | `game-vision-architect`, `design-pillars-architect` |
-| `game-art-director` | `aesthetic-direction-framework`, `threejs-aaa-graphics-builder` |
-| `game-audio-director` | `aesthetic-direction-framework`, `threejs-audio-generator` |
+| `game-art-director` | `aesthetic-direction-framework`, `create-game-assets` |
+| `game-audio-director` | `aesthetic-direction-framework`, `audio-design` |
 | `game-narrative-director` | `narrative-systems-designer`, `world-logic-checker` |
-| `game-ux-designer` | `ui-ux-systems-designer`, `threejs-game-ui-designer` |
+| `game-ux-designer` | `ui-ux-systems-designer`, `game-ui-ux` |
 | `game-technical-director` | `game-architecture`, `technical-design-bridge` |
-| `game-qa-lead` | `game-qa`, `threejs-qa-release`, `playtest-protocol-designer` |
+| `game-qa-lead` | `game-qa`, `playtest-protocol-designer` |
 | `game-producer` | `scope-feature-prioritizer` |
-| `game-prototype` | `prototype-scope-definer` |
+| `game-prototype` | `prototype-scope-definer`, `prototype-fast` |
 
 ## Local additions (not in the upstream skill folders)
 
-- `game-qa/scripts/iterate-client.js` and `game-qa/scripts/example-actions.json`: copied from
+- `docs/VERSION-SUPPORT.md`: copied from awesome-gamedev-agent-skills. The router links to it as
+  `../docs/VERSION-SUPPORT.md`, which resolves here in a flat install.
+- `game-qa/scripts/iterate-client.js` and `game-qa/scripts/example-actions.json`: from
   game-creator's repo-level `scripts/`, because `game-qa` tells you to run `scripts/iterate-client.js`.
 - `game-designer/`, `game-balance-check/`, `game-accessibility-specialist/`, `game-code-review/`:
-  each has the AlterLab `docs/*.md` and `templates/*.md` files its SKILL.md references, placed at
-  the same relative paths.
+  each has the AlterLab `docs/*.md` and `templates/*.md` files its SKILL.md references, at the same
+  relative paths.
 
 ## Deliberately not installed
 
-- **Godot, Unity, Unreal:** the AlterLab engine specialists (not relevant to a browser game).
-- **Duplicates of skills installed above:** game-creator's `threejs-game`, `game-designer`,
-  `qa-game`, `review-game`, `design-game`, `improve-game` and `add-*` wrappers. AlterLab's
-  `game-gdd-author`, `game-playtest`, `game-scope-check`, `game-prototype`, `game-brainstorm`,
-  `game-market-research`, `game-qa-lead`, `game-ux-designer`, `game-technical-director` and
-  other role or workflow skills.
-- **Services and publishing pipelines:** Play.fun monetization, PartyKit multiplayer, here.now
-  deploy, Meshy, Retro Diffusion, World Labs, promo video, tweet-to-game, Steam/itch/console
-  launch and CI. game-creator's `use-template` was skipped because it sends opt-out telemetry
-  to a third-party endpoint.
+- **3D and other engines:** all three.js skills, PixiJS, Godot, Unity, Unreal, Bevy, pygame,
+  LÖVE, Roblox. NEXUS is a 2D Phaser game. The three.js suite and the Phaser 3 `phaser` skill
+  from an earlier setup were removed. They remain in git history (commit `a19d695`).
+- **Not relevant to this game:** the genre templates (platformer, roguelike, RPG, FPS, tower
+  defense, card game, visual novel, survival-crafting, puzzle), `dialogue-systems`,
+  `shader-programming`, `physics-tuning`, `camera-systems`, `level-design`, the Steam and itch
+  publishing workflows, and `game-jam`.
+- **Duplicates or services:** other game-creator and AlterLab skills that repeat installed ones,
+  plus monetization, multiplayer, hosted-deploy and promo pipelines. game-creator's `use-template`
+  was skipped because it sends opt-out telemetry to a third-party endpoint.
 
-## Sources (MIT; see `_licenses/`)
+## Sources (see `_licenses/`)
 
-| Repository | Commit |
-|---|---|
-| https://github.com/majidmanzarpour/threejs-game-skills | `e5f301d548bb18c530afbece78cd25082f4cda9c` |
-| https://github.com/PlayableIntelligence/game-creator | `4e64b83b5fe400b34ad3a484d9b4a6090b26d512` |
-| https://github.com/AlterLab-IEU/AlterLab_GameForge | `5f5148d61986b32299070e87fcd4a1ab3718eacf` |
-| https://github.com/baxatron-git/claude-game-design-suite | `5dd265ac2b143d13683766cdaae9695d3d871909` |
+| Repository | License | Commit |
+|---|---|---|
+| https://github.com/gamedev-skills/awesome-gamedev-agent-skills | Apache-2.0 (LICENSE + NOTICE) | `b105e1cf617adf0b68ed98790a716bbb60993179` |
+| https://github.com/PlayableIntelligence/game-creator | MIT | `4e64b83b5fe400b34ad3a484d9b4a6090b26d512` |
+| https://github.com/AlterLab-IEU/AlterLab_GameForge | MIT | `5f5148d61986b32299070e87fcd4a1ab3718eacf` |
+| https://github.com/baxatron-git/claude-game-design-suite | MIT | `5dd265ac2b143d13683766cdaae9695d3d871909` |

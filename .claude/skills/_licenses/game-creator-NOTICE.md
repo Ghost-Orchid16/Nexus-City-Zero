@@ -6,5 +6,5 @@ The upstream repository ships no LICENSE file. Its README ("## License") states 
 its `.claude-plugin/marketplace.json` declares `"license": "MIT"`, and each copied
 SKILL.md carries `license: MIT` / `author: OpusGameLabs` in its frontmatter.
 
-Copied skills: game-architecture, threejs-perf, phaser, game-qa
+Copied skills: game-architecture, game-qa
 (plus scripts/iterate-client.js and scripts/example-actions.json, placed in game-qa/scripts/).
