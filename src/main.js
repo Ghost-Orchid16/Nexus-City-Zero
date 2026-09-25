@@ -8,6 +8,8 @@ import '@fontsource/nunito/900.css';
 import { GAME_WIDTH, GAME_HEIGHT } from './config/layout.js';
 import { SCENES } from './scenes/index.js';
 import { installDebugHooks } from './core/debug.js';
+import { installAudio } from './audio/sound.js';
+import { settings } from './core/session.js';
 
 const config = {
   type: Phaser.WEBGL,
@@ -54,5 +56,6 @@ game.events.once(Phaser.Core.Events.READY, () => {
 });
 
 installDebugHooks(game);
+installAudio(settings);
 
 export default game;

@@ -9,6 +9,9 @@ import { Pedestrians } from './pedestrians.js';
 import { CityEffects } from './effects.js';
 import { RNG } from '../core/rng.js';
 
+/** World pixels of extra landscape east of the map. */
+const EAST_EXTENSION = 480;
+
 /** Districts lose power in this order as energy falls (the hospital has backup generators). */
 const BLACKOUT_ORDER = ['downtown', 'residential', 'industrial', 'transport', 'water', 'command', 'energy', 'medical'];
 
@@ -51,7 +54,12 @@ export class CityView {
     const s = this.scene;
     this.ground = s.add.image(0, 0, 'ground').setOrigin(0).setDepth(DEPTH.ground);
     this.water = s.add.sprite(0, 0, 'water', 0).setOrigin(0).setDepth(DEPTH.water).play('water-flow');
-    this.tintables.push(this.ground, this.water);
+    // The landscape continues east of the map (fields, boulevard, rail, bay) so districts on the
+    // east edge can still be framed beside the crisis card.
+    const ground = s.textures.get('ground');
+    if (!ground.has('east-strip')) ground.add('east-strip', 0, WORLD_WIDTH - 32, 0, 32, WORLD_HEIGHT);
+    this.eastland = s.add.tileSprite(WORLD_WIDTH, 0, EAST_EXTENSION, WORLD_HEIGHT, 'ground', 'east-strip').setOrigin(0).setDepth(DEPTH.ground);
+    this.tintables.push(this.ground, this.water, this.eastland);
 
     for (const st of STRUCTURES) this._buildStructure(st);
     for (const p of PROPS) this._buildProp(p);
@@ -190,7 +198,7 @@ export class CityView {
     const viewH = GAME_HEIGHT / t.zoom;
     const left = t.scrollX + GAME_WIDTH / 2 - viewW / 2;
     const top = t.scrollY + GAME_HEIGHT / 2 - viewH / 2;
-    const cl = Phaser.Math.Clamp(left, 0, WORLD_WIDTH - viewW);
+    const cl = Phaser.Math.Clamp(left, 0, WORLD_WIDTH + EAST_EXTENSION - viewW);
     const ct = Phaser.Math.Clamp(top, 0, WORLD_HEIGHT - viewH);
     return { scrollX: t.scrollX + (cl - left), scrollY: t.scrollY + (ct - top), zoom: t.zoom };
   }

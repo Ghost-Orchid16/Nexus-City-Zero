@@ -86,6 +86,7 @@ export class FocusGroup {
 
   _key(e) {
     if (!this.enabled || !this.scene.sys.isActive()) return;
+    if (this.current()?.handleKey?.(e)) return; // e.g. a slider consumes ←/→
     switch (e.code) {
       case 'ArrowLeft': this.move(-1, 0); break;
       case 'ArrowRight': this.move(1, 0); break;

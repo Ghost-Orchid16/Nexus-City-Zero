@@ -24,19 +24,38 @@ page.on('pageerror', (e) => logs.push(`[pageerror] ${e.message}`));
 
 await page.goto(url, { waitUntil: 'load' });
 const waitScene = args.wait || 'title';
-await page.waitForFunction((key) => window.__NEXUS__?.activeScenes().includes(key), waitScene, { timeout: 30000 });
+try {
+  await page.waitForFunction((key) => window.__NEXUS__?.activeScenes().includes(key), waitScene, { timeout: 30000 });
+} catch (e) {
+  const errs = await page.evaluate(() => window.__NEXUS__?.errors || []);
+  console.log(`scene "${waitScene}" never became active`);
+  console.log([...logs, ...errs].join('\n') || 'no console errors');
+  await page.screenshot({ path: out });
+  await browser.close();
+  process.exit(1);
+}
 await page.waitForTimeout(Number(args.delay || 800));
 
 if (args.steps) {
   const steps = JSON.parse(readFileSync(args.steps, 'utf8'));
   let n = 0;
   for (const s of steps) {
-    if (s.click) await page.mouse.click(s.click[0], s.click[1]);
-    if (s.key) await page.keyboard.press(s.key);
-    if (s.eval) await page.evaluate(s.eval);
-    if (s.waitScene) await page.waitForFunction((key) => window.__NEXUS__?.activeScenes().includes(key), s.waitScene, { timeout: 30000 });
-    if (s.wait) await page.waitForTimeout(s.wait);
-    if (s.shot) { await page.screenshot({ path: s.shot }); n++; }
+    try {
+      if (s.click) await page.mouse.click(s.click[0], s.click[1]);
+      if (s.key) await page.keyboard.press(s.key);
+      if (s.eval) console.log('eval →', JSON.stringify(await page.evaluate(s.eval)));
+      if (s.waitScene) await page.waitForFunction((key) => window.__NEXUS__?.activeScenes().includes(key), s.waitScene, { timeout: 30000 });
+      if (s.wait) await page.waitForTimeout(s.wait);
+      if (s.shot) { await page.screenshot({ path: s.shot }); n++; }
+    } catch (e) {
+      const errs = await page.evaluate(() => window.__NEXUS__?.errors || []);
+      console.log(`step failed: ${JSON.stringify(s)}\n${e.message.split('\n')[0]}`);
+      console.log('active scenes:', await page.evaluate(() => window.__NEXUS__?.activeScenes()));
+      console.log([...logs, ...errs].join('\n') || 'no console errors');
+      await page.screenshot({ path: out });
+      await browser.close();
+      process.exit(1);
+    }
   }
   console.log(`steps done, ${n} step screenshots`);
 }

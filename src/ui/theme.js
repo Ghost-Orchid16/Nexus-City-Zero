@@ -14,6 +14,11 @@ export const FONT_FACES = [
   '900 32px "Nunito"'
 ];
 
+/** The pixel display font draws 5 like S; titles that contain digits use the body font. */
+export function titleFont(text) {
+  return /\d/.test(text) ? 'body' : 'display';
+}
+
 /**
  * Build a Phaser text style.
  * @param {object} o

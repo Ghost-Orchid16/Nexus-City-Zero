@@ -172,7 +172,10 @@ export class Bar extends Phaser.GameObjects.Container {
     if (this.fill.frame.name !== f) this.fill.setFrame(f);
   }
 
-  /** value 0..1; animated shrink leaves a fading "ghost" to show the loss. */
+  /**
+   * value 0..1. Big changes animate (a shrink leaves a fading "ghost" to show the loss); small
+   * continuous changes (decay every frame) apply instantly so tweens never pile up.
+   */
   setValue(v, animate = true) {
     v = Phaser.Math.Clamp(v, 0, 1);
     if (Math.abs(v - this.value) < 0.001) return;
@@ -181,18 +184,34 @@ export class Bar extends Phaser.GameObjects.Container {
     const prev = this.value < 0 ? v : this.value;
     this.value = v;
     const apply = (px) => {
+      this.shownPx = px;
       const vis = px >= 20;
       this.fill.setVisible(vis);
       if (vis) resizePanel(this.fill, px, this.h - PX * 4);
     };
-    if (!animate) { apply(target); return; }
+    const big = Math.abs(v - prev) >= 0.02;
+    if (!animate || (!big && !this.fillTween?.isPlaying())) {
+      apply(target);
+      return;
+    }
+    if (!big) {
+      this.fillTarget = target;
+      return;
+    }
     if (v < prev) {
-      this.ghost.width = inner * prev;
+      this.scene.tweens.killTweensOf(this.ghost);
+      this.ghost.width = Math.max(this.ghost.alpha > 0.2 ? this.ghost.width : 0, inner * prev);
       this.ghost.setAlpha(0.45);
       this.scene.tweens.add({ targets: this.ghost, width: target, alpha: 0.15, duration: 900, delay: 250, ease: 'Cubic.easeIn' });
     }
-    const state = { px: this.fill.visible ? this.fill.width * PX : 0 };
-    this.scene.tweens.add({ targets: state, px: target, duration: 450, ease: 'Cubic.easeOut', onUpdate: () => apply(state.px) });
+    this.fillTween?.remove();
+    const state = { px: this.shownPx ?? (this.fill.visible ? this.fill.width * PX : 0) };
+    this.fillTarget = target;
+    this.fillTween = this.scene.tweens.add({
+      targets: state, px: target, duration: 450, ease: 'Cubic.easeOut',
+      onUpdate: () => apply(state.px),
+      onComplete: () => { if (this.fillTarget !== target) apply(this.fillTarget); }
+    });
   }
 }
 

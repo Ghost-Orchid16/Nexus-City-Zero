@@ -12,11 +12,11 @@ export const BOARD_SIZE = 5;
 
 /** Scoreboard categories (see the spec's LOCAL SCOREBOARD list). */
 export const BOARDS = [
-  { id: 'survival', title: 'HIGHEST SURVIVAL', unit: '%', better: 'high', value: (r) => r.survival, eligible: () => true },
-  { id: 'citizens', title: 'CITIZENS PROTECTED', unit: '%', better: 'high', value: (r) => r.citizensProtected, eligible: (r) => r.completed },
-  { id: 'efficiency', title: 'RESOURCE EFFICIENCY', unit: '', better: 'high', value: (r) => r.efficiency, eligible: (r) => r.completed },
-  { id: 'failures', title: 'FEWEST CRITICAL FAILURES', unit: '', better: 'low', value: (r) => r.criticalFailures, eligible: (r) => r.completed },
-  { id: 'chaos', title: 'CHAOS MODE VICTORIES', unit: '%', better: 'high', value: (r) => r.survival, eligible: (r) => r.completed && r.chaos }
+  { id: 'survival', title: 'HIGHEST SURVIVAL', short: 'SURVIVAL', unit: '%', better: 'high', value: (r) => r.survival, eligible: () => true },
+  { id: 'citizens', title: 'CITIZENS PROTECTED', short: 'CITIZENS', unit: '%', better: 'high', value: (r) => r.citizensProtected, eligible: (r) => r.completed },
+  { id: 'efficiency', title: 'RESOURCE EFFICIENCY', short: 'EFFICIENCY', unit: '', better: 'high', value: (r) => r.efficiency, eligible: (r) => r.completed },
+  { id: 'failures', title: 'FEWEST CRITICAL FAILURES', short: 'FEWEST FAILURES', unit: '', better: 'low', value: (r) => r.criticalFailures, eligible: (r) => r.completed },
+  { id: 'chaos', title: 'CHAOS MODE VICTORIES', short: 'CHAOS WINS', unit: '%', better: 'high', value: (r) => r.survival, eligible: (r) => r.completed && r.chaos }
 ];
 
 export const DEFAULT_SETTINGS = {
