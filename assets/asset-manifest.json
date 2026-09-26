@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "art_direction_brief": "docs/ART-DIRECTION.md",
+  "generated_by": "npm run art",
+  "assets": [
+    {
+      "id": "ground",
+      "path": "assets/city/ground.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "technical": {
+        "size": "720x400"
+      }
+    },
+    {
+      "id": "water",
+      "path": "assets/city/water.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "frames": 4,
+      "technical": {
+        "frameSize": "720x400"
+      }
+    },
+    {
+      "id": "buildings",
+      "path": "assets/buildings/buildings.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "atlas": "assets/buildings/buildings.json",
+      "frames": 60,
+      "technical": {
+        "size": "1024x256",
+        "alpha": true,
+        "filtering": "smooth-pixel-art (nearest texels)"
+      }
+    },
+    {
+      "id": "city",
+      "path": "assets/city/city.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "atlas": "assets/city/city.json",
+      "frames": 109,
+      "technical": {
+        "size": "1024x128",
+        "alpha": true,
+        "filtering": "smooth-pixel-art (nearest texels)"
+      }
+    },
+    {
+      "id": "people",
+      "path": "assets/characters/people.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "atlas": "assets/characters/people.json",
+      "frames": 64,
+      "technical": {
+        "size": "512x64",
+        "alpha": true,
+        "filtering": "smooth-pixel-art (nearest texels)"
+      }
+    },
+    {
+      "id": "effects",
+      "path": "assets/effects/effects.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "atlas": "assets/effects/effects.json",
+      "frames": 62,
+      "technical": {
+        "size": "1024x128",
+        "alpha": true,
+        "filtering": "smooth-pixel-art (nearest texels)"
+      }
+    },
+    {
+      "id": "icons",
+      "path": "assets/icons/icons.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "atlas": "assets/icons/icons.json",
+      "frames": 52,
+      "technical": {
+        "size": "1024x64",
+        "alpha": true,
+        "filtering": "smooth-pixel-art (nearest texels)"
+      }
+    },
+    {
+      "id": "portraits",
+      "path": "assets/characters/portraits.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "atlas": "assets/characters/portraits.json",
+      "frames": 7,
+      "technical": {
+        "size": "512x64",
+        "alpha": true,
+        "filtering": "smooth-pixel-art (nearest texels)"
+      }
+    },
+    {
+      "id": "ui",
+      "path": "assets/ui/ui.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "atlas": "assets/ui/ui.json",
+      "frames": 83,
+      "technical": {
+        "size": "1024x128",
+        "alpha": true,
+        "filtering": "smooth-pixel-art (nearest texels)"
+      }
+    },
+    {
+      "id": "sky",
+      "path": "assets/backgrounds/sky.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "technical": {
+        "size": "640x360"
+      }
+    },
+    {
+      "id": "mountains",
+      "path": "assets/backgrounds/mountains.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "technical": {
+        "size": "640x140"
+      }
+    },
+    {
+      "id": "skyline-far",
+      "path": "assets/backgrounds/skyline-far.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "technical": {
+        "size": "640x170"
+      }
+    },
+    {
+      "id": "skyline-mid",
+      "path": "assets/backgrounds/skyline-mid.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "technical": {
+        "size": "640x210"
+      }
+    },
+    {
+      "id": "skyline-near",
+      "path": "assets/backgrounds/skyline-near.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "technical": {
+        "size": "640x110"
+      }
+    },
+    {
+      "id": "vignettes",
+      "path": "assets/backgrounds/vignettes.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "technical": {
+        "size": "160x720"
+      }
+    },
+    {
+      "id": "clouds",
+      "path": "assets/backgrounds/clouds.png",
+      "status": "approved",
+      "source": {
+        "kind": "authored-in-code",
+        "tool": "tools/art/forge.mjs (NEXUS art forge)",
+        "creator": "NEXUS: CITY ZERO project",
+        "license": "Original work of this project",
+        "notes": "Procedural + hand-specified pixel art; palette src/config/palette.js; no third-party or AI-generated images."
+      },
+      "atlas": "assets/backgrounds/clouds.json",
+      "frames": 4,
+      "technical": {
+        "size": "256x64",
+        "alpha": true,
+        "filtering": "smooth-pixel-art (nearest texels)"
+      }
+    }
+  ]
+}
